@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Task;
-
+use Exception;
 class TaskRepository
 {
     public function get_all()
@@ -13,7 +13,11 @@ class TaskRepository
 
     public function get_task_by_id($id)
     {
-        return Task::find($id);
+        $task = Task::find($id);
+        if (!$task) {
+            throw new Exception('Task not found.');
+        }
+        return $task;
     }
 
     public function create(array $data)
@@ -21,14 +25,22 @@ class TaskRepository
         return Task::create($data);
     }
 
-    public function update(Task $task, array $data)
+    public function update($id, array $data)
     {
+        $task = Task::find($id);
+        if (!$task) {
+            throw new Exception('Task not found');
+        }
         $task->update($data);
         return $task;
     }
 
-    public function delete(Task $task)
+    public function delete($id)
     {
+        $task = Task::find($id);
+        if (!$task) {
+            throw new Exception('Task not found');
+        }
         $task->delete();
     }
 }

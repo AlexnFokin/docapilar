@@ -24,7 +24,16 @@ class TaskController extends Controller
             $tasks = $this->taskService->get_all();
             return ApiResponse::success('Tasks retrieved successfully.',$tasks);
         } catch (\Exception $e) {
-            return ApiResponse::error('Failed to retrieve tasks.', null);
+            return ApiResponse::error($e->getMessage(), null);
+        }
+    }
+
+    public function show(Request $request, $id)  {
+        try {
+            $task = $this->taskService->get_task_by_id($id);
+            return ApiResponse::success('Task retrieved successfully.',$task);
+        } catch (\Exception $e) {
+            return ApiResponse::error($e->getMessage(), null);
         }
     }
 
@@ -43,14 +52,14 @@ class TaskController extends Controller
             $task = $this->taskService->create($data);
             return ApiResponse::success('Task created successfully',$task);
         } catch (\Exception $e) {
-            return ApiResponse::error('Failed to create task.', null);
+            return ApiResponse::error($e->getMessage(), null);
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Task $task)
+    public function update(Request $request, $id)
     {
         try {
             $data = $request->validate([
@@ -59,23 +68,23 @@ class TaskController extends Controller
                 'is_completed' => 'required|boolean',
             ]);
 
-            $updated_task = $this->taskService->update($task, $data);
+            $updated_task = $this->taskService->update($id, $data);
             return ApiResponse::success('Task updated successfully.', $updated_task);
         } catch (\Exception $e) {
-            return ApiResponse::error('Failed to update task.', null);
+            return ApiResponse::error($e->getMessage(), null);
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task)
+    public function destroy($id)
     {
         try {
-            $this->taskService->delete($task);
+            $this->taskService->delete($id);
             return ApiResponse::success('Task deleted successfully.');
         } catch (\Exception $e) {
-            return ApiResponse::error('Failed to delete task.', null);
+            return ApiResponse::error($e->getMessage(), null);
         }
     }
 }
